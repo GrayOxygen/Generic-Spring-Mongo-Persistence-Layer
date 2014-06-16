@@ -1,0 +1,3 @@
+Spring repositories docs:
+http://docs.spring.io/spring-data/data-mongodb/docs/1.0.0.M5/reference/html/#repositories
+
