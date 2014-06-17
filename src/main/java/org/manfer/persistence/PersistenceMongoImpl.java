@@ -3,6 +3,7 @@ package org.manfer.persistence;
 import java.util.List;
 import java.util.Map;
 import org.manfer.dto.Dto;
+import org.manfer.persistence.repositories.MongoRepositoryDto;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.mongodb.repository.support.MongoRepositoryFactory;
@@ -17,7 +18,7 @@ public class PersistenceMongoImpl implements Persistence {
     private final Map<Class, Class> mongoDtoRepositoryTypeMapping;
     private final RepositoryFactorySupport repoFactory;
     
-    private MongoRepository mongoRepository;
+    private MongoRepositoryDto mongoRepository;
 
     public PersistenceMongoImpl(MongoTemplate mongoTemplate, Map<Class, Class> mongoRepositoryTypesMapping){
         this.mongoTemplate = mongoTemplate;
@@ -37,9 +38,9 @@ public class PersistenceMongoImpl implements Persistence {
         mongoRepository.save(dto);
     }
 
-    private <T extends Dto> MongoRepository getMongoRepositoryInstance(Class dtoType) {
+    private <T extends Dto> MongoRepositoryDto getMongoRepositoryInstance(Class dtoType) {
         Class mongoRepositoryType = mongoDtoRepositoryTypeMapping.get(dtoType);
-        return (MongoRepository) repoFactory.getRepository(mongoRepositoryType);        
+        return (MongoRepositoryDto) repoFactory.getRepository(mongoRepositoryType);        
     }
     
     
@@ -75,8 +76,12 @@ public class PersistenceMongoImpl implements Persistence {
         mongoRepository = getMongoRepositoryInstance(collection);
         mongoRepository.delete(dto);
     }
-    
-    
+
+    @Override
+    public <T extends Dto> void findByName(String name, Class<T> collection) {
+        mongoRepository = getMongoRepositoryInstance(collection);
+        mongoRepository.findByName(name);
+    }
 
 
 }

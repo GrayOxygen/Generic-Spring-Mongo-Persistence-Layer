@@ -31,6 +31,7 @@ public class PlayerDto implements Dto {
         this.id = id;
     }
 
+    @Override
     public String getName() {
         return name;
     }

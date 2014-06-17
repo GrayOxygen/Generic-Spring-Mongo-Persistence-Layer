@@ -58,6 +58,14 @@ public class PersistenceTest_IT {
     }
 
     @Test
+    public void shouldLoadAPlayerByName() {
+        
+        persistence.findByName("Leo", PlayerDto.class);
+        
+    }
+    
+    
+    @Test
     public void shouldLoadAPlayerDtoByName() {
         PlayerDto bestPlayer = persistence.findOne("539f149644aed29e03e4cacf", PlayerDto.class);
         assertTrue(bestPlayer.getName().equals("Leo"));
@@ -81,5 +89,6 @@ public class PersistenceTest_IT {
     public void shouldDeleteAllPlayerDtoCollection() {
         persistence.deleteAll(PlayerDto.class);
     }
+    
 
 }

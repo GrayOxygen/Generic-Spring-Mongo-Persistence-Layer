@@ -29,10 +29,6 @@ public interface Persistence {
 
     public <T extends Dto> void delete(T dto, Class<T> collection);
 
-
-
-    
-    
-        
+    public <T extends Dto> void findByName(String name, Class<T> collection);
 
 }
