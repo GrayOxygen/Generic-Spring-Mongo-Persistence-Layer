@@ -5,12 +5,13 @@ import java.util.Map;
 import org.manfer.dto.Dto;
 import org.manfer.persistence.repositories.MongoRepositoryDto;
 import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.mongodb.repository.support.MongoRepositoryFactory;
 import org.springframework.data.repository.core.support.RepositoryFactorySupport;
 
 /**
  * Implementation of the persistence layer interface for MongoDB.
+ * 
+ * @author marcandreuf
  */
 public class PersistenceMongoImpl implements Persistence {
 
@@ -20,9 +21,9 @@ public class PersistenceMongoImpl implements Persistence {
     
     private MongoRepositoryDto mongoRepository;
 
-    public PersistenceMongoImpl(MongoTemplate mongoTemplate, Map<Class, Class> mongoRepositoryTypesMapping){
+    public PersistenceMongoImpl(MongoTemplate mongoTemplate, Map<Class, Class> dtoVsRepositoryMapping){
         this.mongoTemplate = mongoTemplate;
-        this.mongoDtoRepositoryTypeMapping = mongoRepositoryTypesMapping;
+        this.mongoDtoRepositoryTypeMapping = dtoVsRepositoryMapping;
         this.repoFactory = new MongoRepositoryFactory(mongoTemplate);
     }
     
@@ -78,9 +79,9 @@ public class PersistenceMongoImpl implements Persistence {
     }
 
     @Override
-    public <T extends Dto> void findByName(String name, Class<T> collection) {
+    public <T extends Dto> T findByName(String name, Class<T> collection) {
         mongoRepository = getMongoRepositoryInstance(collection);
-        mongoRepository.findByName(name);
+        return (T) mongoRepository.findByName(name);
     }
 
 

@@ -4,7 +4,9 @@ import java.util.Objects;
 import org.springframework.data.annotation.Id;
 
 /**
- * This is a simple POJO object to be persisted.
+ * This is a sample POJO object to be persisted.
+ * 
+ * @author marcandreuf
  */
 public class PlayerDto implements Dto {
 

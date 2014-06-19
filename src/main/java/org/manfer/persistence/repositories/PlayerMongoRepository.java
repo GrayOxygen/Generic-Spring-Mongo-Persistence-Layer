@@ -3,7 +3,10 @@ package org.manfer.persistence.repositories;
 import org.manfer.dto.PlayerDto;
 
 /**
- * Mongo repository for PlayerDto
+ * Sample MongoDB repository for PlayerDto.
+ * 
+ * 
+ * @author marcandreuf
  */
 public interface PlayerMongoRepository extends MongoRepositoryDto<PlayerDto, String> {
     

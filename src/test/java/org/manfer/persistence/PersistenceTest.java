@@ -15,17 +15,26 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 
+
 /**
- * Integration tests for the main interface of the persistence layer.
+ * Unit tests for the main interface of the persistence layer.
  * 
  * @author marcandreuf
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = {PersistenceContextConfiguration.class})
-public class PersistenceTest_IT {
+public class PersistenceTest {
+    
+    
+    
 
     @Autowired
     private Persistence persistence;
+    
+    public PersistenceTest(){
+        persistence = new PersistenceMongoImpl(null, null);
+    }
+    
 
     @Test
     public void shouldTestConnectionToMongoDB() {
