@@ -13,6 +13,8 @@ import org.springframework.data.mongodb.MongoDbFactory;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.SimpleMongoDbFactory;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
+import org.springframework.data.mongodb.repository.support.MongoRepositoryFactory;
+import org.springframework.data.repository.core.support.RepositoryFactorySupport;
 
 
 /**
@@ -47,6 +49,9 @@ public class PersistenceContextConfiguration {
         return mongoTemplate;
     }    
     
+    
+    
+    
     /**
      * Main bean to perform all persistence actions from the application level.
      * All interaction with the DB from the application code should go through this interface.
@@ -55,7 +60,9 @@ public class PersistenceContextConfiguration {
      * @throws java.lang.Exception
      */
     public @Bean Persistence mongoPersistenceImpl() throws Exception {
-        return new PersistenceMongoImpl(mongoTemplate(), registrationMappingDtoVsRepository());
+        return new PersistenceMongoImpl(mongoTemplate(), 
+                                        registrationMappingDtoVsRepository(),
+                                        mongoRepositoryFactorySupport());
     }
 
     /*
@@ -69,6 +76,11 @@ public class PersistenceContextConfiguration {
         mapTypes.put(PlayerDto.class, PlayerMongoRepository.class); 
         
         return mapTypes;
+    }
+    
+    
+    private RepositoryFactorySupport mongoRepositoryFactorySupport() throws Exception {
+        return new MongoRepositoryFactory(mongoTemplate());
     }
     
 }

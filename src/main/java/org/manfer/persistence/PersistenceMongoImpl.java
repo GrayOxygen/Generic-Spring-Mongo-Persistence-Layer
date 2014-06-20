@@ -3,9 +3,8 @@ package org.manfer.persistence;
 import java.util.List;
 import java.util.Map;
 import org.manfer.dto.Dto;
-import org.manfer.persistence.repositories.MongoRepositoryDto;
+import org.manfer.persistence.repositories.MongoDtoRepository;
 import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.repository.support.MongoRepositoryFactory;
 import org.springframework.data.repository.core.support.RepositoryFactorySupport;
 
 /**
@@ -19,12 +18,15 @@ public class PersistenceMongoImpl implements Persistence {
     private final Map<Class, Class> mongoDtoRepositoryTypeMapping;
     private final RepositoryFactorySupport repoFactory;
     
-    private MongoRepositoryDto mongoRepository;
+    
+    private MongoDtoRepository mongoRepository;
 
-    public PersistenceMongoImpl(MongoTemplate mongoTemplate, Map<Class, Class> dtoVsRepositoryMapping){
+    public PersistenceMongoImpl(MongoTemplate mongoTemplate, 
+                                Map<Class, Class> mongoDtoRepositoryTypeMapping,
+                                RepositoryFactorySupport repoFactory){
         this.mongoTemplate = mongoTemplate;
-        this.mongoDtoRepositoryTypeMapping = dtoVsRepositoryMapping;
-        this.repoFactory = new MongoRepositoryFactory(mongoTemplate);
+        this.mongoDtoRepositoryTypeMapping = mongoDtoRepositoryTypeMapping;
+        this.repoFactory = repoFactory;
     }
     
     
@@ -39,9 +41,9 @@ public class PersistenceMongoImpl implements Persistence {
         mongoRepository.save(dto);
     }
 
-    private <T extends Dto> MongoRepositoryDto getMongoRepositoryInstance(Class dtoType) {
+    private <T extends Dto> MongoDtoRepository getMongoRepositoryInstance(Class dtoType) {
         Class mongoRepositoryType = mongoDtoRepositoryTypeMapping.get(dtoType);
-        return (MongoRepositoryDto) repoFactory.getRepository(mongoRepositoryType);        
+        return (MongoDtoRepository) repoFactory.getRepository(mongoRepositoryType);        
     }
     
     

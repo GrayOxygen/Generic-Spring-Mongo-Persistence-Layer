@@ -8,6 +8,6 @@ import org.manfer.dto.PlayerDto;
  * 
  * @author marcandreuf
  */
-public interface PlayerMongoRepository extends MongoRepositoryDto<PlayerDto, String> {
+public interface PlayerMongoRepository extends MongoDtoRepository<PlayerDto, String> {
     
 }

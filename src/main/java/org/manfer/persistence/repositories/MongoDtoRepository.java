@@ -12,7 +12,7 @@ import org.springframework.data.mongodb.repository.MongoRepository;
  * @param <T> specific type to be persisted.
  * @param <ID> type of the id field.
  */
-public interface MongoRepositoryDto<T extends Dto, ID extends Serializable> extends MongoRepository<T, ID> {
+public interface MongoDtoRepository<T extends Dto, ID extends Serializable> extends MongoRepository<T, ID> {
     
     public T findByName(String name);
 
