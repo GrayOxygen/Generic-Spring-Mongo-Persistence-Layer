@@ -44,40 +44,18 @@ public class PersistenceMongoImpl implements Persistence {
     private <T extends Dto> MongoDtoRepository getMongoRepositoryInstance(Class dtoType) {
         Class mongoRepositoryType = mongoDtoRepositoryTypeMapping.get(dtoType);
         return (MongoDtoRepository) repoFactory.getRepository(mongoRepositoryType);        
-    }
-    
-    
-    @Override
-    public <T extends Dto> void deleteAll(Class<T> collection) {
-        mongoRepository = getMongoRepositoryInstance(collection);  
-        mongoRepository.deleteAll();
-    }
-    
+    }    
     
     @Override
     public <T extends Dto> void saveAll(List<T> lstPlayers) {
         mongoRepository = getMongoRepositoryInstance(lstPlayers.get(0).getClass());
         mongoRepository.save(lstPlayers);
-    }
-    
+    }    
 
     @Override
     public <T extends Dto> T findOne(String id, Class<T> collection) {
         mongoRepository = getMongoRepositoryInstance(collection);
         return (T) mongoRepository.findOne(id);       
-    }
-
-
-    @Override
-    public <T extends Dto> List<T> findAll(Class<T> collection) {
-        mongoRepository = getMongoRepositoryInstance(collection);
-        return mongoRepository.findAll();
-    }
-
-    @Override
-    public <T extends Dto> void delete(T dto, Class<T> collection) {
-        mongoRepository = getMongoRepositoryInstance(collection);
-        mongoRepository.delete(dto);
     }
 
     @Override
@@ -86,5 +64,23 @@ public class PersistenceMongoImpl implements Persistence {
         return (T) mongoRepository.findByName(name);
     }
 
+    @Override
+    public <T extends Dto> List<T> findAll(Class<T> collection) {
+        mongoRepository = getMongoRepositoryInstance(collection);
+        return mongoRepository.findAll();
+    }
+    
+    
+    @Override
+    public <T extends Dto> void delete(T dto, Class<T> collection) {
+        mongoRepository = getMongoRepositoryInstance(collection);
+        mongoRepository.delete(dto);
+    }
+
+    @Override
+    public <T extends Dto> void deleteAll(Class<T> collection) {
+        mongoRepository = getMongoRepositoryInstance(collection);  
+        mongoRepository.deleteAll();
+    }
 
 }

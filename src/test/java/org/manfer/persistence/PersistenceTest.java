@@ -1,23 +1,19 @@
 package org.manfer.persistence;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import static org.junit.Assert.assertTrue;
 import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.manfer.dto.Dto;
 import org.manfer.dto.PlayerDto;
 import org.manfer.persistence.repositories.MongoDtoRepository;
-import org.manfer.persistence.spring.PersistenceContextConfiguration;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.mongodb.repository.support.MongoRepositoryFactory;
 import org.springframework.data.repository.core.support.RepositoryFactorySupport;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 
 
@@ -26,13 +22,17 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
  * 
  * @author marcandreuf
  */
-public class PersistenceTest {
-    
+public class PersistenceTest {    
     
     private RepositoryFactorySupport mock_repoFactory;
     private MongoTemplate mock_mongoTemplate;
     private Map<Class ,Class> mock_map;
     private Persistence persistence;
+    
+    private final PlayerDto mock_player = mock(PlayerDto.class);
+    private final Object mongoRepositoryType = mock(Object.class);
+    private final MongoDtoRepository mock_mongoDtoRepository = mock(MongoDtoRepository.class);
+    private final Class mongoRepositoryClass = mongoRepositoryType.getClass();
     
     public PersistenceTest(){
         mock_repoFactory = mock(MongoRepositoryFactory.class);
@@ -50,72 +50,94 @@ public class PersistenceTest {
 
     
     @Test
-    public void shouldTestTheCallsToSoreAPlayerUsingTheRegisteredMongoDtoRepository() {
-        PlayerDto player = mock(PlayerDto.class);
-        Object mongoRepositoryType = mock(Object.class);
-        Object dtoType = mock(Object.class);
-        MongoDtoRepository mock_mongoDtoRepository = mock(MongoDtoRepository.class);
-        Class dtoTypeClass = dtoType.getClass();
-        Class mongoRepositoryClass = mongoRepositoryType.getClass();
-        
-        when(mock_map.get(any(Object.class))).thenReturn(mongoRepositoryClass);  
+    public void shouldTestTheCallsToStoreAPlayerUsingTheRegisteredMongoDtoRepository() {
+        when(mock_map.get(any(Dto.class))).thenReturn(mongoRepositoryClass);  
         when(mock_repoFactory.getRepository(mongoRepositoryClass)).thenReturn(mock_mongoDtoRepository);
         
-        persistence.save(player);
+        persistence.save(mock_player);
         
         verify(mock_repoFactory).getRepository(mongoRepositoryType.getClass());
-        verify(mock_mongoDtoRepository).save(player);
+        verify(mock_mongoDtoRepository).save(mock_player);
+    }
+    
+
+    @Test
+    public void shouldTestTheCallsToStoreAListOfPlayersUsingTheRegisteredMongoDtoRepository() {
+        List mock_lstPlayer = mock(List.class);
+        
+        when(mock_map.get(any(Dto.class))).thenReturn(mongoRepositoryClass);  
+        when(mock_repoFactory.getRepository(mongoRepositoryClass)).thenReturn(mock_mongoDtoRepository);
+        when(mock_lstPlayer.get(0)).thenReturn(mock_player);
+        
+        persistence.saveAll(mock_lstPlayer);
+        
+        verify(mock_repoFactory).getRepository(mongoRepositoryType.getClass());
+        verify(mock_mongoDtoRepository).save(mock_lstPlayer);
     }
 
-    
-    
 
-//    @Test
-//    public void shouldPersistAndLoadAListOfPlayers() {
-//        List<PlayerDto> lstPlayers = saveSampleListOfPlayers();
-//        
-//        List<PlayerDto> loadedListPlayers = loadAllCurrentList();
-//        assertTrue(loadedListPlayers.size() == lstPlayers.size());
-//    }
-//
-//    private List<PlayerDto> saveSampleListOfPlayers() {
-//        List<PlayerDto> lstPlayers = getSampleListOfPlayers();
-//        persistence.saveAll(lstPlayers);
-//        return lstPlayers;
-//    }
-//
-//    private List<PlayerDto> getSampleListOfPlayers() {
-//        List<PlayerDto> lstPlayers = new ArrayList<>();
-//        lstPlayers.add(createPlayerDto("Xabi", "Hernandez"));
-//        lstPlayers.add(createPlayerDto("Xabi", "Busquets"));
-//        lstPlayers.add(createPlayerDto("Oleguer", "Presas"));
-//        return lstPlayers;
-//    }
-//
-//
-//
-//    @Test
-//    public void shouldDeleteOnePlayer() {
-//        List<PlayerDto> lstPlayers = saveSampleListOfPlayers();
-//        PlayerDto playerToDelete = lstPlayers.get(0);
-//
-//        persistence.delete(playerToDelete, PlayerDto.class);
-//        
-//        List<PlayerDto> loadedListAfterDelete = loadAllCurrentList();
-//        assertTrue(loadedListAfterDelete.size() == lstPlayers.size()-1);
-//    }
-//
-//    private List<PlayerDto> loadAllCurrentList() {
-//        return persistence.findAll(PlayerDto.class);
-//    }
-//
-//    @Test
-//    public void shouldDeleteAllPlayerDtoCollection() {
-//        persistence.deleteAll(PlayerDto.class);
-//        
-//        List<PlayerDto> loadedListAfterDelete = loadAllCurrentList();
-//        assertTrue(loadedListAfterDelete.isEmpty());        
-//    }
+    @Test
+    public void shouldTestTheCallsToDeleteAPlayerUsingTheRegisteredMongoDtoRepository() {
+        PlayerDto playerToDelete = mock(PlayerDto.class);
+        
+        when(mock_map.get(any(Dto.class))).thenReturn(mongoRepositoryClass);  
+        when(mock_repoFactory.getRepository(mongoRepositoryClass)).thenReturn(mock_mongoDtoRepository);
+
+        persistence.delete(playerToDelete, PlayerDto.class);
+        
+        verify(mock_repoFactory).getRepository(mongoRepositoryType.getClass());
+        verify(mock_mongoDtoRepository).delete(playerToDelete);
+    }
+
+
+    @Test
+    public void shouldTestTheCallsToDeleteACollectionTypeUsingTheRegisteredMongoDtoRepository() {
+        when(mock_map.get(any(Dto.class))).thenReturn(mongoRepositoryClass);  
+        when(mock_repoFactory.getRepository(mongoRepositoryClass)).thenReturn(mock_mongoDtoRepository);
+
+        persistence.deleteAll(PlayerDto.class);
+        
+        verify(mock_repoFactory).getRepository(mongoRepositoryType.getClass());
+        verify(mock_mongoDtoRepository).deleteAll();        
+    }
     
+    
+    @Test
+    public void shouldTestTheCallsToFindByIdUsingTheRegisteredMongoDtoRepository() {
+        String sample_id = "00001";
+        when(mock_map.get(any(Dto.class))).thenReturn(mongoRepositoryClass);  
+        when(mock_repoFactory.getRepository(mongoRepositoryClass)).thenReturn(mock_mongoDtoRepository);
+
+        persistence.findOne(sample_id, mongoRepositoryClass);
+        
+        verify(mock_repoFactory).getRepository(mongoRepositoryType.getClass());
+        verify(mock_mongoDtoRepository).findOne(sample_id);
+    }
+    
+    
+    @Test
+    public void shouldTestTheCallsToFindByNameUsingTheRegisteredMongoDtoRepository() {
+        String sample_name = "testName";
+        
+        when(mock_map.get(any(Dto.class))).thenReturn(mongoRepositoryClass);  
+        when(mock_repoFactory.getRepository(mongoRepositoryClass)).thenReturn(mock_mongoDtoRepository);
+
+        persistence.findByName(sample_name, mongoRepositoryClass);
+        
+        verify(mock_repoFactory).getRepository(mongoRepositoryType.getClass());
+        verify(mock_mongoDtoRepository).findByName(sample_name);
+    }
+    
+    
+    @Test
+    public void shouldTestTheCallsToFindAllUsingTheRegisteredMongoDtoRepository() {
+        when(mock_map.get(any(Dto.class))).thenReturn(mongoRepositoryClass);  
+        when(mock_repoFactory.getRepository(mongoRepositoryClass)).thenReturn(mock_mongoDtoRepository);
+
+        persistence.findAll(mongoRepositoryClass);
+        
+        verify(mock_repoFactory).getRepository(mongoRepositoryType.getClass());
+        verify(mock_mongoDtoRepository).findAll();
+    }
 
 }
